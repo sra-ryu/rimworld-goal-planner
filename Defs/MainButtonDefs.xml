@@ -5,6 +5,7 @@
     <label>goals</label>
     <description>Plan goals and see the research, buildings and resources they require.</description>
     <tabWindowClass>GoalPlanner.MainTabWindow_GoalPlanner</tabWindowClass>
-    <order>95</order>
+    <!-- After World (70), before the icon buttons History (80) / Factions (90) / Menu (500) -->
+    <order>75</order>
   </MainButtonDef>
 </Defs>
