@@ -247,23 +247,29 @@ public class PlanCalculator
 
     /// <summary>
     /// The "make X" recipe for an item, or null if it isn't something we should break down.
-    /// Raw materials (steel, plasteel...) are never expanded, so smelting recipes don't turn steel into slag.
+    /// Components count as stuff and use hand-written recipes (Make_ComponentIndustrial), so neither
+    /// IsStuff nor recipeMaker tells us anything here. Instead we look for a recipe whose only product
+    /// is the item, and skip raw resources so "extract metal from slag" doesn't turn steel into slag.
     /// </summary>
     private static RecipeDef GetCraftRecipe(ThingDef def)
     {
-        if (def.IsStuff || def.recipeMaker == null)
+        craftRecipeCache ??= new Dictionary<ThingDef, RecipeDef>();
+        if (craftRecipeCache.TryGetValue(def, out RecipeDef recipe))
         {
-            return null;
+            return recipe;
         }
 
-        craftRecipeCache ??= new Dictionary<ThingDef, RecipeDef>();
-        if (!craftRecipeCache.TryGetValue(def, out RecipeDef recipe))
+        bool isRawResource = def.thingCategories != null && def.thingCategories.Contains(ThingCategoryDefOf.ResourcesRaw);
+        if (!isRawResource)
         {
-            recipe = DefDatabase<RecipeDef>.AllDefs.FirstOrDefault(r =>
-                r.products != null && r.products.Count == 1 && r.products[0].thingDef == def
-                && !r.ingredients.NullOrEmpty());
-            craftRecipeCache[def] = recipe;
+            // Prefer recipes with fixed ingredients (e.g. chemfuel from wood over "from any organics").
+            recipe = DefDatabase<RecipeDef>.AllDefs
+                .Where(r => r.products != null && r.products.Count == 1 && r.products[0].thingDef == def
+                            && !r.ingredients.NullOrEmpty())
+                .OrderByDescending(r => r.ingredients.All(i => i.IsFixedIngredient))
+                .FirstOrDefault();
         }
+        craftRecipeCache[def] = recipe;
         return recipe;
     }
 
