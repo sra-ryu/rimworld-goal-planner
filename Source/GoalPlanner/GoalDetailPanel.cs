@@ -136,7 +136,8 @@ public class GoalDetailPanel
             TooltipHandler.TipRegion(row, "GoalPlanner_StockLeftDesc".Translate());
         }
 
-        if (node.Shortfall > 0 && node.craft == null && PlanCalculator.IsUncraftable(node.def))
+        // Shown even when in stock: it is a reminder that more can only come from traders, quests or salvage.
+        if (PlanCalculator.IsUncraftable(node.def))
         {
             Rect warnRect = new(indented.x + 260f, row.y, row.xMax - StatusWidth - indented.x - 260f, row.height);
             DrawStatus(warnRect, "GoalPlanner_Uncraftable".Translate(), WarnColor, TextAnchor.MiddleLeft);
