@@ -56,7 +56,11 @@ Assemblies/              Build output (GoalPlanner.dll, not committed)
 
 ## Installation
 
-> Steam Workshop release coming soon.
+Subscribe on the [Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=3841892388).
+
+## Development
+
+This mod was written with [Claude Code](https://claude.com/claude-code), Anthropic's AI coding assistant.
 
 ## License
 
@@ -120,7 +124,11 @@ Assemblies/              빌드 결과물 (GoalPlanner.dll, 커밋하지 않음)
 
 ## 설치 방법
 
-> Steam 창작마당 배포 준비 중입니다.
+[Steam 창작마당](https://steamcommunity.com/sharedfiles/filedetails/?id=3841892388)에서 구독하세요.
+
+## 개발
+
+이 모드는 Anthropic의 AI 코딩 도구인 [Claude Code](https://claude.com/claude-code)로 작성했습니다.
 
 ## 라이선스
 
