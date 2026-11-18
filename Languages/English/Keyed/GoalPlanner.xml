@@ -6,4 +6,27 @@
   <GoalPlanner_ChooseGoal>Choose a goal</GoalPlanner_ChooseGoal>
   <GoalPlanner_NoResults>No matching buildings.</GoalPlanner_NoResults>
   <GoalPlanner_Remove>Remove goal</GoalPlanner_Remove>
+  <GoalPlanner_ConstructionSkill>Requires construction skill {0}</GoalPlanner_ConstructionSkill>
+  <GoalPlanner_ExpandCrafting>Break crafted materials down (e.g. components → steel)</GoalPlanner_ExpandCrafting>
+  <GoalPlanner_ExpandCraftingDesc>When on, craftable materials such as components are replaced with what they are made from, and the workbenches and research needed to craft them are added.</GoalPlanner_ExpandCraftingDesc>
+  <GoalPlanner_Materials>Materials (total)</GoalPlanner_Materials>
+  <GoalPlanner_Fuel>Fuel to fill up</GoalPlanner_Fuel>
+  <GoalPlanner_Research>Research ({0} left)</GoalPlanner_Research>
+  <GoalPlanner_ResearchAllDone>Research (all done)</GoalPlanner_ResearchAllDone>
+  <GoalPlanner_ResearchLeft>{0} left</GoalPlanner_ResearchLeft>
+  <GoalPlanner_Done>Done</GoalPlanner_Done>
+  <GoalPlanner_Buildings>Prerequisite buildings</GoalPlanner_Buildings>
+  <GoalPlanner_BuildingsNote>Materials for buildings you don't have yet are included in the total above.</GoalPlanner_BuildingsNote>
+  <GoalPlanner_Built>Have</GoalPlanner_Built>
+  <GoalPlanner_NotBuilt>Not built</GoalPlanner_NotBuilt>
+  <GoalPlanner_Crafts>Items to craft</GoalPlanner_Crafts>
+  <GoalPlanner_None>None</GoalPlanner_None>
+  <GoalPlanner_HaveNeed>{0} / {1}</GoalPlanner_HaveNeed>
+  <GoalPlanner_AnyStuff>Any material: {0}</GoalPlanner_AnyStuff>
+  <GoalPlanner_Uncraftable>Can't be crafted</GoalPlanner_Uncraftable>
+  <GoalPlanner_UncraftableDesc>No recipe makes this. Get it from traders, quests or by salvaging.</GoalPlanner_UncraftableDesc>
+  <GoalPlanner_ReasonResearch>Research: {0}</GoalPlanner_ReasonResearch>
+  <GoalPlanner_ReasonCraft>Craft: {0}</GoalPlanner_ReasonCraft>
+  <GoalPlanner_ReasonBuild>Build: {0}</GoalPlanner_ReasonBuild>
+  <GoalPlanner_Cost>Cost: {0}</GoalPlanner_Cost>
 </LanguageData>

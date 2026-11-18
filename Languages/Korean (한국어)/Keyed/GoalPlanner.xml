@@ -6,4 +6,27 @@
   <GoalPlanner_ChooseGoal>목표 선택</GoalPlanner_ChooseGoal>
   <GoalPlanner_NoResults>일치하는 건물이 없습니다.</GoalPlanner_NoResults>
   <GoalPlanner_Remove>목표 삭제</GoalPlanner_Remove>
+  <GoalPlanner_ConstructionSkill>건설 기술 {0} 이상 필요</GoalPlanner_ConstructionSkill>
+  <GoalPlanner_ExpandCrafting>제작 재료를 원재료로 풀어서 계산 (예: 부품 → 강철)</GoalPlanner_ExpandCrafting>
+  <GoalPlanner_ExpandCraftingDesc>켜면 부품처럼 제작할 수 있는 재료를 그 원재료로 바꿔서 계산하고, 제작에 필요한 작업대와 연구도 함께 추가합니다.</GoalPlanner_ExpandCraftingDesc>
+  <GoalPlanner_Materials>필요 자원 (합계)</GoalPlanner_Materials>
+  <GoalPlanner_Fuel>연료 (가득 채우기)</GoalPlanner_Fuel>
+  <GoalPlanner_Research>선행 연구 ({0}개 남음)</GoalPlanner_Research>
+  <GoalPlanner_ResearchAllDone>선행 연구 (모두 완료)</GoalPlanner_ResearchAllDone>
+  <GoalPlanner_ResearchLeft>{0} 남음</GoalPlanner_ResearchLeft>
+  <GoalPlanner_Done>완료</GoalPlanner_Done>
+  <GoalPlanner_Buildings>선행 건물</GoalPlanner_Buildings>
+  <GoalPlanner_BuildingsNote>아직 없는 건물의 재료는 위 필요 자원 합계에 포함되어 있습니다.</GoalPlanner_BuildingsNote>
+  <GoalPlanner_Built>보유 중</GoalPlanner_Built>
+  <GoalPlanner_NotBuilt>없음</GoalPlanner_NotBuilt>
+  <GoalPlanner_Crafts>제작해야 하는 재료</GoalPlanner_Crafts>
+  <GoalPlanner_None>없음</GoalPlanner_None>
+  <GoalPlanner_HaveNeed>{0} / {1}</GoalPlanner_HaveNeed>
+  <GoalPlanner_AnyStuff>재료 선택: {0}</GoalPlanner_AnyStuff>
+  <GoalPlanner_Uncraftable>제작 불가</GoalPlanner_Uncraftable>
+  <GoalPlanner_UncraftableDesc>이 물건을 만드는 레시피가 없습니다. 상인, 퀘스트, 잔해 회수 등으로 구해야 합니다.</GoalPlanner_UncraftableDesc>
+  <GoalPlanner_ReasonResearch>연구: {0}</GoalPlanner_ReasonResearch>
+  <GoalPlanner_ReasonCraft>제작: {0}</GoalPlanner_ReasonCraft>
+  <GoalPlanner_ReasonBuild>건설: {0}</GoalPlanner_ReasonBuild>
+  <GoalPlanner_Cost>재료: {0}</GoalPlanner_Cost>
 </LanguageData>

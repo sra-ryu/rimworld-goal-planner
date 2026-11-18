@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using RimWorld;
@@ -13,13 +14,15 @@ public class Dialog_AddGoal : Window
     private const float IconSize = 28f;
 
     private readonly List<ThingDef> candidates;
+    private readonly Action<Goal> onAdded;
     private readonly QuickSearchWidget search = new();
     private Vector2 scrollPosition;
 
     public override Vector2 InitialSize => new(520f, 640f);
 
-    public Dialog_AddGoal()
+    public Dialog_AddGoal(Action<Goal> onAdded = null)
     {
+        this.onAdded = onAdded;
         doCloseX = true;
         closeOnClickedOutside = true;
         absorbInputAroundWindow = true;
@@ -60,7 +63,11 @@ public class Dialog_AddGoal : Window
             }
             if (DrawRow(row, shown[i], i))
             {
-                GameComponent_GoalPlanner.Instance?.AddGoal(shown[i]);
+                Goal goal = GameComponent_GoalPlanner.Instance?.AddGoal(shown[i]);
+                if (goal != null)
+                {
+                    onAdded?.Invoke(goal);
+                }
                 Close();
                 break;
             }

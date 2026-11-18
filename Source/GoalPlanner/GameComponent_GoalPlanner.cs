@@ -8,6 +8,9 @@ public class GameComponent_GoalPlanner : GameComponent
 {
     public List<Goal> goals = new();
 
+    /// <summary>Break crafted materials (components...) down into what they're made from.</summary>
+    public bool expandCrafting;
+
     public static GameComponent_GoalPlanner Instance => Current.Game?.GetComponent<GameComponent_GoalPlanner>();
 
     // RimWorld creates game components through this constructor.
@@ -35,6 +38,7 @@ public class GameComponent_GoalPlanner : GameComponent
     public override void ExposeData()
     {
         Scribe_Collections.Look(ref goals, "goals", LookMode.Deep);
+        Scribe_Values.Look(ref expandCrafting, "expandCrafting");
 
         if (Scribe.mode == LoadSaveMode.PostLoadInit)
         {
