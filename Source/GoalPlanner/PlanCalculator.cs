@@ -33,7 +33,7 @@ public class PlanCalculator
     public static GoalPlan Calculate(Goal goal, bool expandCrafting)
     {
         var calc = new PlanCalculator(expandCrafting);
-        calc.AddBuildable(goal.target, goal.count);
+        calc.AddBuildable(goal.target, goal.count, calc.plan.goalMaterials);
         calc.AddFuel(goal.target, goal.count);
 
         for (int i = 0; i < MaxRebuilds; i++)
@@ -50,20 +50,20 @@ public class PlanCalculator
 
     // ---------------------------------------------------------------- building
 
-    private void AddBuildable(ThingDef def, int count)
+    private void AddBuildable(ThingDef def, int count, MaterialGroup materials)
     {
         if (def.CostList != null)
         {
             foreach (ThingDefCountClass cost in def.CostList)
             {
-                plan.AddMaterial(cost.thingDef, cost.count * count);
+                materials.Add(cost.thingDef, cost.count * count);
             }
         }
 
         int stuffCount = def.CostStuffCount;
         if (def.MadeFromStuff && stuffCount > 0)
         {
-            AddStuff(def.stuffCategories, stuffCount * count);
+            AddStuff(materials, def.stuffCategories, stuffCount * count);
         }
 
         plan.constructionSkill = Mathf.Max(plan.constructionSkill, def.constructionSkillPrerequisite);
@@ -85,16 +85,16 @@ public class PlanCalculator
         }
     }
 
-    private void AddStuff(List<StuffCategoryDef> categories, int count)
+    private static void AddStuff(MaterialGroup materials, List<StuffCategoryDef> categories, int count)
     {
-        StuffRequirement existing = plan.stuff.Find(s => s.categories.SequenceEqual(categories));
+        StuffRequirement existing = materials.stuff.Find(s => s.categories.SequenceEqual(categories));
         if (existing != null)
         {
             existing.count += count;
         }
         else
         {
-            plan.stuff.Add(new StuffRequirement { categories = categories, count = count });
+            materials.stuff.Add(new StuffRequirement { categories = categories, count = count });
         }
     }
 
@@ -116,7 +116,7 @@ public class PlanCalculator
         // Its own needs come first so the list reads in build order.
         if (!req.built)
         {
-            AddBuildable(def, 1);
+            AddBuildable(def, 1, plan.buildingMaterials);
         }
         plan.buildings.Add(req);
     }
@@ -191,21 +191,24 @@ public class PlanCalculator
     // ---------------------------------------------------------------- crafting
 
     /// <summary>
-    /// Builds <see cref="GoalPlan.materialTree"/>. Stock is handed out first to the direct materials,
-    /// then to crafting ingredients level by level, so the same steel is never counted twice.
+    /// Builds the material trees. Stock is handed out first to the goal's own materials, then to the
+    /// prerequisite buildings, then to crafting ingredients level by level, so the same steel is never counted twice.
     /// </summary>
     private void BuildMaterialTree()
     {
-        plan.materialTree.Clear();
         plan.onHandTotals.Clear();
         unclaimedStock.Clear();
 
         var level = new List<MaterialNode>();
-        foreach (ThingDef def in plan.materialOrder)
+        foreach (MaterialGroup group in new[] { plan.goalMaterials, plan.buildingMaterials })
         {
-            MaterialNode node = MakeNode(def, plan.materials[def]);
-            plan.materialTree.Add(node);
-            level.Add(node);
+            group.tree.Clear();
+            foreach (ThingDef def in group.order)
+            {
+                MaterialNode node = MakeNode(def, group.counts[def]);
+                group.tree.Add(node);
+                level.Add(node);
+            }
         }
 
         for (int depth = 0; depth < MaxCraftDepth && level.Count > 0; depth++)
@@ -221,9 +224,10 @@ public class PlanCalculator
             level = next;
         }
 
-        if (plan.HasCrafting)
+        if (plan.ShowOnHandTotals)
         {
-            CollectOnHandTotals(plan.materialTree);
+            CollectOnHandTotals(plan.goalMaterials.tree);
+            CollectOnHandTotals(plan.buildingMaterials.tree);
         }
     }
 

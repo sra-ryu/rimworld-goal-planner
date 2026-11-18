@@ -7,7 +7,7 @@ A RimWorld mod that lets you set goals and shows everything you need to reach th
 - **Multiple goals**: Add as many goals as you like (e.g. "Build a shuttle") and open each one to see its full breakdown.
 - **Prerequisite research**: The full research chain the goal depends on, including the research benches and facilities those projects require (e.g. hi-tech research bench, multi-analyzer).
 - **Prerequisite buildings**: Buildings and furniture you have to build first, with their own material costs.
-- **Total resources**: A combined bill of materials for the goal and everything it depends on (e.g. steel, components, plasteel).
+- **Resources**: Materials for the goal itself and for its prerequisite buildings are listed separately, with a combined total to have on hand (e.g. steel, components, plasteel).
 - **Fuel calculation**: How much fuel a refuelable building needs to fill up completely (e.g. chemfuel for a shuttle).
 
 ## Requirements
@@ -75,7 +75,7 @@ This project is licensed under the [MIT License](LICENSE).
 - **여러 개의 목표**: 목표(예: "우주 왕복선 만들기")를 원하는 만큼 추가하고, 각 목표를 눌러 필요한 내용을 자세히 볼 수 있습니다.
 - **선행 연구**: 목표에 필요한 연구를 처음부터 끝까지 보여주고, 그 연구에 필요한 연구대와 시설(예: 첨단 연구대, 복합 분석기)도 함께 알려줍니다.
 - **선행 건물**: 먼저 지어야 하는 건물과 가구, 그리고 각각의 건설 재료를 보여줍니다.
-- **총 필요 자원**: 목표와 선행 건물에 들어가는 자원을 모두 합산해 보여줍니다(예: 강철, 부품, 플라스틸).
+- **필요 자원**: 목표 자체의 재료와 선행 건물의 재료를 나눠서 보여주고, 준비해야 할 총량도 함께 알려줍니다(예: 강철, 부품, 플라스틸).
 - **연료 계산**: 연료를 쓰는 건물을 가득 채우는 데 필요한 연료량을 계산합니다(예: 우주 왕복선의 화학 연료).
 
 ## 요구 사항

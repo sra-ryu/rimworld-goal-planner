@@ -9,14 +9,16 @@
   <GoalPlanner_ConstructionSkill>Requires construction skill {0}</GoalPlanner_ConstructionSkill>
   <GoalPlanner_ExpandCrafting>Show how to craft missing materials (e.g. components → steel)</GoalPlanner_ExpandCrafting>
   <GoalPlanner_ExpandCraftingDesc>When on, materials you don't have enough of are expanded below with what it takes to craft the missing amount. The workbenches and research needed for crafting are added too.</GoalPlanner_ExpandCraftingDesc>
-  <GoalPlanner_Materials>Materials (total)</GoalPlanner_Materials>
+  <GoalPlanner_Materials>Materials for the goal</GoalPlanner_Materials>
+  <GoalPlanner_BuildingMaterials>Materials for prerequisite buildings</GoalPlanner_BuildingMaterials>
+  <GoalPlanner_BuildingStockDesc>Stock left after the goal's own materials.</GoalPlanner_BuildingStockDesc>
   <GoalPlanner_Fuel>Fuel to fill up</GoalPlanner_Fuel>
   <GoalPlanner_Research>Research ({0} left)</GoalPlanner_Research>
   <GoalPlanner_ResearchAllDone>Research (all done)</GoalPlanner_ResearchAllDone>
   <GoalPlanner_ResearchLeft>{0} left</GoalPlanner_ResearchLeft>
   <GoalPlanner_Done>Done</GoalPlanner_Done>
   <GoalPlanner_Buildings>Prerequisite buildings</GoalPlanner_Buildings>
-  <GoalPlanner_BuildingsNote>Materials for buildings you don't have yet are included in the total above.</GoalPlanner_BuildingsNote>
+  <GoalPlanner_BuildingsNote>Materials for buildings you don't have yet are listed under "Materials for prerequisite buildings".</GoalPlanner_BuildingsNote>
   <GoalPlanner_Built>Have</GoalPlanner_Built>
   <GoalPlanner_NotBuilt>Not built</GoalPlanner_NotBuilt>
   <GoalPlanner_None>None</GoalPlanner_None>
@@ -31,5 +33,5 @@
   <GoalPlanner_CraftShortfall>{0} short, can be crafted at {1}</GoalPlanner_CraftShortfall>
   <GoalPlanner_Shortfall>{0} short</GoalPlanner_Shortfall>
   <GoalPlanner_StockLeftDesc>Amount needed for the item above.</GoalPlanner_StockLeftDesc>
-  <GoalPlanner_OnHandTotals>Total to have on hand (including crafting)</GoalPlanner_OnHandTotals>
+  <GoalPlanner_OnHandTotals>Total to have on hand (including buildings and crafting)</GoalPlanner_OnHandTotals>
 </LanguageData>

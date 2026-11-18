@@ -13,29 +13,18 @@ public class GoalPlan
     /// <summary>Buildings needed along the way (research benches, facilities, workbenches...).</summary>
     public readonly List<BuildingRequirement> buildings = new();
 
-    /// <summary>Direct material costs, including prerequisite buildings that aren't built yet.</summary>
-    public readonly Dictionary<ThingDef, int> materials = new();
+    /// <summary>Materials for the goal itself (count included).</summary>
+    public readonly MaterialGroup goalMaterials = new();
 
-    /// <summary>
-    /// Materials in the order they were first added: the goal's own costs first, then prerequisite buildings.
-    /// Used for display so rows don't jump around when the goal count changes.
-    /// </summary>
-    public readonly List<ThingDef> materialOrder = new();
-
-    /// <summary>
-    /// The same materials as a tree: each one shows what's in stock, and when crafting is expanded,
-    /// what it takes to craft the missing amount (which can contain further crafted items).
-    /// </summary>
-    public readonly List<MaterialNode> materialTree = new();
+    /// <summary>Materials for prerequisite buildings that aren't built yet.</summary>
+    public readonly MaterialGroup buildingMaterials = new();
 
     /// <summary>
     /// How much of each item has to be on hand, counting crafting ingredients
-    /// (e.g. steel for the goal plus steel for the missing components). Only filled when something is crafted.
+    /// (e.g. steel for the goal, its prerequisite buildings and the missing components).
+    /// Only filled when <see cref="ShowOnHandTotals"/> is true.
     /// </summary>
     public readonly Dictionary<ThingDef, int> onHandTotals = new();
-
-    /// <summary>"Any stuff" costs, e.g. 50x metallic/woody/stony.</summary>
-    public readonly List<StuffRequirement> stuff = new();
 
     /// <summary>Fuel needed to fill the goal building completely.</summary>
     public readonly List<FuelRequirement> fuel = new();
@@ -43,19 +32,48 @@ public class GoalPlan
     /// <summary>Highest construction skill required among the things to build.</summary>
     public int constructionSkill;
 
-    public bool HasCrafting => materialTree.Exists(n => n.craft != null);
+    public bool HasCrafting => goalMaterials.HasCrafting || buildingMaterials.HasCrafting;
 
-    public void AddMaterial(ThingDef def, int count)
+    /// <summary>A combined total is only useful when materials come from more than one place.</summary>
+    public bool ShowOnHandTotals => HasCrafting || !buildingMaterials.IsEmpty;
+}
+
+/// <summary>One section of the materials list: direct costs, their tree and any-stuff costs.</summary>
+public class MaterialGroup
+{
+    /// <summary>Direct material costs.</summary>
+    public readonly Dictionary<ThingDef, int> counts = new();
+
+    /// <summary>
+    /// Materials in the order they were first added.
+    /// Used for display so rows don't jump around when the goal count changes.
+    /// </summary>
+    public readonly List<ThingDef> order = new();
+
+    /// <summary>
+    /// The same materials as a tree: each one shows what's in stock, and when crafting is expanded,
+    /// what it takes to craft the missing amount (which can contain further crafted items).
+    /// </summary>
+    public readonly List<MaterialNode> tree = new();
+
+    /// <summary>"Any stuff" costs, e.g. 50x metallic/woody/stony.</summary>
+    public readonly List<StuffRequirement> stuff = new();
+
+    public bool HasCrafting => tree.Exists(n => n.craft != null);
+
+    public bool IsEmpty => counts.Count == 0 && stuff.Count == 0;
+
+    public void Add(ThingDef def, int count)
     {
         if (def == null || count <= 0)
         {
             return;
         }
-        if (!materials.TryGetValue(def, out int current))
+        if (!counts.TryGetValue(def, out int current))
         {
-            materialOrder.Add(def);
+            order.Add(def);
         }
-        materials[def] = current + count;
+        counts[def] = current + count;
     }
 }
 

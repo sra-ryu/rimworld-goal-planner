@@ -64,7 +64,12 @@ public class GoalDetailPanel
         Rect viewRect = new(0f, 0f, outRect.width - 16f, Mathf.Max(contentHeight, outRect.height));
         Widgets.BeginScrollView(outRect, ref scrollPosition, viewRect);
         float curY = 0f;
-        DrawMaterials(plan, viewRect.width, ref curY);
+        DrawMaterials(plan.goalMaterials, "GoalPlanner_Materials".Translate(), null, viewRect.width, ref curY);
+        if (!plan.buildingMaterials.IsEmpty)
+        {
+            DrawMaterials(plan.buildingMaterials, "GoalPlanner_BuildingMaterials".Translate(),
+                "GoalPlanner_BuildingStockDesc".Translate(), viewRect.width, ref curY);
+        }
         DrawOnHandTotals(plan, viewRect.width, ref curY);
         DrawFuel(plan, viewRect.width, ref curY);
         DrawResearch(plan, viewRect.width, ref curY);
@@ -91,23 +96,24 @@ public class GoalDetailPanel
 
     // ---------------------------------------------------------------- sections
 
-    private static void DrawMaterials(GoalPlan plan, float width, ref float y)
+    /// <param name="stockTip">Tooltip for top-level rows whose "have" is what's left after earlier sections.</param>
+    private static void DrawMaterials(MaterialGroup group, string header, string stockTip, float width, ref float y)
     {
-        Widgets.ListSeparator(ref y, width, "GoalPlanner_Materials".Translate());
+        Widgets.ListSeparator(ref y, width, header);
 
-        if (plan.materialTree.Count == 0 && plan.stuff.Count == 0)
+        if (group.tree.Count == 0 && group.stuff.Count == 0)
         {
             DrawNone(width, ref y);
             return;
         }
 
         int index = 0;
-        foreach (MaterialNode node in plan.materialTree)
+        foreach (MaterialNode node in group.tree)
         {
-            DrawMaterialNode(node, 0, width, ref y, ref index);
+            DrawMaterialNode(node, 0, stockTip, width, ref y, ref index);
         }
 
-        foreach (StuffRequirement stuff in plan.stuff)
+        foreach (StuffRequirement stuff in group.stuff)
         {
             Rect row = NextRow(width, ref y, index++);
             string categories = stuff.categories.Select(c => c.label).ToCommaListOr();
@@ -117,7 +123,7 @@ public class GoalDetailPanel
     }
 
     /// <summary>A material line, followed (indented) by how its shortfall gets crafted.</summary>
-    private static void DrawMaterialNode(MaterialNode node, int depth, float width, ref float y, ref int index)
+    private static void DrawMaterialNode(MaterialNode node, int depth, string stockTip, float width, ref float y, ref int index)
     {
         Rect row = NextRow(width, ref y, index++);
         Rect indented = Indent(row, depth);
@@ -134,6 +140,10 @@ public class GoalDetailPanel
         if (depth > 0)
         {
             TooltipHandler.TipRegion(row, "GoalPlanner_StockLeftDesc".Translate());
+        }
+        else if (stockTip != null)
+        {
+            TooltipHandler.TipRegion(row, stockTip);
         }
 
         // Shown even when in stock: it is a reminder that more can only come from traders, quests or salvage.
@@ -164,14 +174,14 @@ public class GoalDetailPanel
 
         foreach (MaterialNode ingredient in craft.ingredients)
         {
-            DrawMaterialNode(ingredient, depth + 1, width, ref y, ref index);
+            DrawMaterialNode(ingredient, depth + 1, stockTip, width, ref y, ref index);
         }
     }
 
-    /// <summary>Total to keep in stock once crafting is counted (e.g. steel for the goal + steel for components).</summary>
+    /// <summary>Total to keep in stock across the goal, prerequisite buildings and crafting.</summary>
     private static void DrawOnHandTotals(GoalPlan plan, float width, ref float y)
     {
-        if (!plan.HasCrafting)
+        if (!plan.ShowOnHandTotals)
         {
             return;
         }
