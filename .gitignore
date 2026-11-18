@@ -12,3 +12,6 @@ Assemblies/*.pdb
 
 # macOS
 .DS_Store
+
+# Workshop package
+dist/
