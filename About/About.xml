@@ -3,7 +3,7 @@
   <name>Goal Planner</name>
   <author>comdobby</author>
   <packageId>comdobby.GoalPlanner</packageId>
-  <modVersion>1.0.0</modVersion>
+  <modVersion>1.0.1</modVersion>
   <url>https://github.com/sra-ryu/rimworld-goal-planner</url>
   <description>Set goals and see everything you need to reach them: prerequisite research, buildings and workbenches, and resources. Plan ahead and stockpile materials before you start building.
 
