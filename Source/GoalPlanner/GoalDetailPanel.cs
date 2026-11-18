@@ -149,14 +149,16 @@ public class GoalDetailPanel
             return;
         }
 
-        // "Craft the missing 10 (10x at fabrication bench)"
+        // "10 short, can be crafted at fabrication bench"
         CraftStep craft = node.craft;
         Rect craftRow = NextRow(width, ref y, index++);
         Rect craftIndented = Indent(craftRow, depth + 1);
-        string where = craft.workbench != null ? craft.workbench.LabelCap.ToString() : "-";
+        string text = craft.workbench != null
+            ? "GoalPlanner_CraftShortfall".Translate(craft.amount, craft.workbench.LabelCap)
+            : "GoalPlanner_Shortfall".Translate(craft.amount);
         GUI.color = WarnColor;
         Text.Anchor = TextAnchor.MiddleLeft;
-        Widgets.Label(craftIndented, "GoalPlanner_CraftShortfall".Translate(craft.amount, craft.times, where));
+        Widgets.Label(craftIndented, text);
         Text.Anchor = TextAnchor.UpperLeft;
         GUI.color = Color.white;
 

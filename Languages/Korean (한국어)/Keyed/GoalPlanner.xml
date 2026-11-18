@@ -7,8 +7,8 @@
   <GoalPlanner_NoResults>일치하는 건물이 없습니다.</GoalPlanner_NoResults>
   <GoalPlanner_Remove>목표 삭제</GoalPlanner_Remove>
   <GoalPlanner_ConstructionSkill>건설 기술 {0} 이상 필요</GoalPlanner_ConstructionSkill>
-  <GoalPlanner_ExpandCrafting>제작 재료를 원재료로 풀어서 계산 (예: 부품 → 강철)</GoalPlanner_ExpandCrafting>
-  <GoalPlanner_ExpandCraftingDesc>켜면 부품처럼 제작할 수 있는 재료를 그 원재료로 바꿔서 계산하고, 제작에 필요한 작업대와 연구도 함께 추가합니다.</GoalPlanner_ExpandCraftingDesc>
+  <GoalPlanner_ExpandCrafting>부족한 재료의 제작 재료 펼치기 (예: 부품 → 강철)</GoalPlanner_ExpandCrafting>
+  <GoalPlanner_ExpandCraftingDesc>켜면 부족한 재료 아래에, 모자란 만큼 제작하는 데 필요한 재료를 펼쳐서 보여줍니다. 제작에 필요한 작업대와 연구도 함께 추가됩니다.</GoalPlanner_ExpandCraftingDesc>
   <GoalPlanner_Materials>필요 자원 (합계)</GoalPlanner_Materials>
   <GoalPlanner_Fuel>연료 (가득 채우기)</GoalPlanner_Fuel>
   <GoalPlanner_Research>선행 연구 ({0}개 남음)</GoalPlanner_Research>
@@ -19,7 +19,6 @@
   <GoalPlanner_BuildingsNote>아직 없는 건물의 재료는 위 필요 자원 합계에 포함되어 있습니다.</GoalPlanner_BuildingsNote>
   <GoalPlanner_Built>보유 중</GoalPlanner_Built>
   <GoalPlanner_NotBuilt>없음</GoalPlanner_NotBuilt>
-  <GoalPlanner_Crafts>제작해야 하는 재료</GoalPlanner_Crafts>
   <GoalPlanner_None>없음</GoalPlanner_None>
   <GoalPlanner_HaveNeed>{0} / {1}</GoalPlanner_HaveNeed>
   <GoalPlanner_AnyStuff>재료 선택: {0}</GoalPlanner_AnyStuff>
@@ -29,4 +28,8 @@
   <GoalPlanner_ReasonCraft>제작: {0}</GoalPlanner_ReasonCraft>
   <GoalPlanner_ReasonBuild>건설: {0}</GoalPlanner_ReasonBuild>
   <GoalPlanner_Cost>재료: {0}</GoalPlanner_Cost>
+  <GoalPlanner_CraftShortfall>{0}개 부족, {1}에서 제작 가능</GoalPlanner_CraftShortfall>
+  <GoalPlanner_Shortfall>{0}개 부족</GoalPlanner_Shortfall>
+  <GoalPlanner_StockLeftDesc>보유량: 위 항목에 쓰고 남은 재고입니다.</GoalPlanner_StockLeftDesc>
+  <GoalPlanner_OnHandTotals>준비해야 할 총량 (제작 재료 포함)</GoalPlanner_OnHandTotals>
 </LanguageData>
