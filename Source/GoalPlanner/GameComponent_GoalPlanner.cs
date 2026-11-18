@@ -15,6 +15,23 @@ public class GameComponent_GoalPlanner : GameComponent
     {
     }
 
+    /// <summary>Adds a goal, or raises the count if the same target is already a goal.</summary>
+    public Goal AddGoal(ThingDef target, int count = 1)
+    {
+        Goal existing = goals.Find(g => g.target == target);
+        if (existing != null)
+        {
+            existing.count += count;
+            return existing;
+        }
+
+        var goal = new Goal(target, count);
+        goals.Add(goal);
+        return goal;
+    }
+
+    public void RemoveGoal(Goal goal) => goals.Remove(goal);
+
     public override void ExposeData()
     {
         Scribe_Collections.Look(ref goals, "goals", LookMode.Deep);

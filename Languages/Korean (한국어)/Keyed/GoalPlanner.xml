@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LanguageData>
   <GoalPlanner_Title>목표 플래너</GoalPlanner_Title>
-  <GoalPlanner_NoGoals>아직 설정한 목표가 없습니다.</GoalPlanner_NoGoals>
+  <GoalPlanner_NoGoals>아직 설정한 목표가 없습니다. "목표 추가"를 눌러 만들고 싶은 것을 골라 보세요.</GoalPlanner_NoGoals>
+  <GoalPlanner_AddGoal>목표 추가</GoalPlanner_AddGoal>
+  <GoalPlanner_ChooseGoal>목표 선택</GoalPlanner_ChooseGoal>
+  <GoalPlanner_NoResults>일치하는 건물이 없습니다.</GoalPlanner_NoResults>
+  <GoalPlanner_Remove>목표 삭제</GoalPlanner_Remove>
 </LanguageData>

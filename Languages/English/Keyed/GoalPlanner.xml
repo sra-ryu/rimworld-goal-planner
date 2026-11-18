@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LanguageData>
   <GoalPlanner_Title>Goal Planner</GoalPlanner_Title>
-  <GoalPlanner_NoGoals>No goals yet.</GoalPlanner_NoGoals>
+  <GoalPlanner_NoGoals>No goals yet. Click "Add goal" to choose something to build.</GoalPlanner_NoGoals>
+  <GoalPlanner_AddGoal>Add goal</GoalPlanner_AddGoal>
+  <GoalPlanner_ChooseGoal>Choose a goal</GoalPlanner_ChooseGoal>
+  <GoalPlanner_NoResults>No matching buildings.</GoalPlanner_NoResults>
+  <GoalPlanner_Remove>Remove goal</GoalPlanner_Remove>
 </LanguageData>
