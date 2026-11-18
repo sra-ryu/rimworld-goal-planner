@@ -12,8 +12,10 @@ namespace GoalPlanner;
 /// </summary>
 public class PlanCalculator
 {
-    // Guards against runaway recipe loops (e.g. A is made from B and B from A).
-    private const int MaxCraftSteps = 200;
+    // Crafting can add workbenches whose own cost changes the tree, so it is rebuilt until it settles.
+    private const int MaxRebuilds = 10;
+    // Guards against recipe loops (e.g. A is made from B and B from A).
+    private const int MaxCraftDepth = 8;
 
     private static Dictionary<ThingDef, RecipeDef> craftRecipeCache;
 
@@ -21,6 +23,7 @@ public class PlanCalculator
     private readonly bool expandCrafting;
     private readonly HashSet<ResearchProjectDef> visitedResearch = new();
     private readonly Dictionary<ThingDef, BuildingRequirement> buildingsByDef = new();
+    private readonly Dictionary<ThingDef, int> unclaimedStock = new();
 
     private PlanCalculator(bool expandCrafting)
     {
@@ -32,9 +35,15 @@ public class PlanCalculator
         var calc = new PlanCalculator(expandCrafting);
         calc.AddBuildable(goal.target, goal.count);
         calc.AddFuel(goal.target, goal.count);
-        if (expandCrafting)
+
+        for (int i = 0; i < MaxRebuilds; i++)
         {
-            calc.ExpandCrafting();
+            int buildingsBefore = calc.plan.buildings.Count;
+            calc.BuildMaterialTree();
+            if (calc.plan.buildings.Count == buildingsBefore)
+            {
+                break;
+            }
         }
         return calc.plan;
     }
@@ -182,67 +191,121 @@ public class PlanCalculator
     // ---------------------------------------------------------------- crafting
 
     /// <summary>
-    /// Replaces craftable intermediates (components, advanced components...) with what they're made from,
-    /// and adds the workbench and research needed to craft them.
+    /// Builds <see cref="GoalPlan.materialTree"/>. Stock is handed out first to the direct materials,
+    /// then to crafting ingredients level by level, so the same steel is never counted twice.
     /// </summary>
-    private void ExpandCrafting()
+    private void BuildMaterialTree()
     {
-        for (int step = 0; step < MaxCraftSteps; step++)
+        plan.materialTree.Clear();
+        plan.onHandTotals.Clear();
+        unclaimedStock.Clear();
+
+        var level = new List<MaterialNode>();
+        foreach (ThingDef def in plan.materialOrder)
         {
-            ThingDef item = plan.materials.Keys.FirstOrDefault(d => GetCraftRecipe(d) != null);
-            if (item == null)
+            MaterialNode node = MakeNode(def, plan.materials[def]);
+            plan.materialTree.Add(node);
+            level.Add(node);
+        }
+
+        for (int depth = 0; depth < MaxCraftDepth && level.Count > 0; depth++)
+        {
+            var next = new List<MaterialNode>();
+            foreach (MaterialNode node in level)
             {
-                return;
-            }
-
-            int needed = plan.materials[item];
-            plan.materials.Remove(item);
-            RecipeDef recipe = GetCraftRecipe(item);
-
-            int perCraft = Mathf.Max(1, recipe.products[0].count);
-            int crafts = Mathf.CeilToInt(needed / (float)perCraft);
-
-            foreach (IngredientCount ingredient in recipe.ingredients)
-            {
-                if (ingredient.IsFixedIngredient)
+                if (expandCrafting && TryCraft(node))
                 {
-                    ThingDef input = ingredient.FixedIngredient;
-                    plan.AddMaterial(input, ingredient.CountRequiredOfFor(input, recipe) * crafts);
-                }
-                else
-                {
-                    string label = ingredient.filter.Summary;
-                    plan.otherIngredients.TryGetValue(label, out float current);
-                    plan.otherIngredients[label] = current + ingredient.GetBaseCount() * crafts;
+                    next.AddRange(node.craft.ingredients);
                 }
             }
+            level = next;
+        }
 
-            ThingDef workbench = PickWorkbench(recipe);
-            if (workbench != null)
-            {
-                AddPrerequisiteBuilding(workbench, "GoalPlanner_ReasonCraft".Translate(item.LabelCap));
-            }
-            AddResearch(recipe.researchPrerequisite);
-            if (recipe.researchPrerequisites != null)
-            {
-                foreach (ResearchProjectDef research in recipe.researchPrerequisites)
-                {
-                    AddResearch(research);
-                }
-            }
+        if (plan.HasCrafting)
+        {
+            CollectOnHandTotals(plan.materialTree);
+        }
+    }
 
-            CraftRequirement existing = plan.crafts.Find(c => c.def == item);
-            if (existing != null)
+    private MaterialNode MakeNode(ThingDef def, int need)
+    {
+        if (!unclaimedStock.TryGetValue(def, out int stock))
+        {
+            stock = CountInColony(def);
+        }
+        int take = Mathf.Min(stock, need);
+        unclaimedStock[def] = stock - take;
+        return new MaterialNode { def = def, label = def.LabelCap, need = need, stockBefore = stock, fromStock = take };
+    }
+
+    /// <summary>Adds a craft step for the node's shortfall. Returns false if nothing needs crafting.</summary>
+    private bool TryCraft(MaterialNode node)
+    {
+        if (node.def == null || node.Shortfall <= 0)
+        {
+            return false;
+        }
+        RecipeDef recipe = GetCraftRecipe(node.def);
+        if (recipe == null)
+        {
+            return false;
+        }
+
+        int perCraft = Mathf.Max(1, recipe.products[0].count);
+        var step = new CraftStep
+        {
+            recipe = recipe,
+            amount = node.Shortfall,
+            times = Mathf.CeilToInt(node.Shortfall / (float)perCraft),
+            workbench = PickWorkbench(recipe),
+        };
+
+        foreach (IngredientCount ingredient in recipe.ingredients)
+        {
+            if (ingredient.IsFixedIngredient)
             {
-                existing.count += needed;
+                ThingDef input = ingredient.FixedIngredient;
+                step.ingredients.Add(MakeNode(input, ingredient.CountRequiredOfFor(input, recipe) * step.times));
             }
             else
             {
-                plan.crafts.Add(new CraftRequirement { def = item, count = needed, recipe = recipe, workbench = workbench });
+                int count = Mathf.CeilToInt(ingredient.GetBaseCount() * step.times);
+                step.ingredients.Add(new MaterialNode { label = ingredient.filter.Summary.CapitalizeFirst(), need = count });
             }
         }
+        node.craft = step;
 
-        Log.Warning("[Goal Planner] Stopped expanding crafted materials after " + MaxCraftSteps + " steps.");
+        if (step.workbench != null)
+        {
+            AddPrerequisiteBuilding(step.workbench, "GoalPlanner_ReasonCraft".Translate(node.def.LabelCap));
+        }
+        AddResearch(recipe.researchPrerequisite);
+        if (recipe.researchPrerequisites != null)
+        {
+            foreach (ResearchProjectDef research in recipe.researchPrerequisites)
+            {
+                AddResearch(research);
+            }
+        }
+        return true;
+    }
+
+    /// <summary>Everything that has to come from stock: all needs minus what gets crafted.</summary>
+    private void CollectOnHandTotals(List<MaterialNode> nodes)
+    {
+        foreach (MaterialNode node in nodes)
+        {
+            if (node.def != null)
+            {
+                int fromStockOrMissing = node.craft == null ? node.need : node.need - node.craft.amount;
+                plan.onHandTotals.TryGetValue(node.def, out int current);
+                plan.onHandTotals[node.def] = current + fromStockOrMissing;
+            }
+            if (node.craft != null)
+            {
+                CollectOnHandTotals(node.craft.ingredients);
+            }
+        }
     }
 
     /// <summary>

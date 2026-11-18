@@ -65,10 +65,10 @@ public class GoalDetailPanel
         Widgets.BeginScrollView(outRect, ref scrollPosition, viewRect);
         float curY = 0f;
         DrawMaterials(plan, viewRect.width, ref curY);
+        DrawOnHandTotals(plan, viewRect.width, ref curY);
         DrawFuel(plan, viewRect.width, ref curY);
         DrawResearch(plan, viewRect.width, ref curY);
         DrawBuildings(plan, viewRect.width, ref curY);
-        DrawCrafts(plan, viewRect.width, ref curY);
         contentHeight = curY;
         Widgets.EndScrollView();
     }
@@ -95,26 +95,16 @@ public class GoalDetailPanel
     {
         Widgets.ListSeparator(ref y, width, "GoalPlanner_Materials".Translate());
 
-        if (plan.materials.Count == 0 && plan.stuff.Count == 0 && plan.otherIngredients.Count == 0)
+        if (plan.materialTree.Count == 0 && plan.stuff.Count == 0)
         {
             DrawNone(width, ref y);
             return;
         }
 
         int index = 0;
-        foreach (KeyValuePair<ThingDef, int> entry in plan.materials.OrderByDescending(e => e.Value))
+        foreach (MaterialNode node in plan.materialTree)
         {
-            ThingDef def = entry.Key;
-            Rect row = NextRow(width, ref y, index++);
-            DrawIconLabel(row, def, def.LabelCap);
-            DrawHaveNeed(row, PlanCalculator.CountInColony(def), entry.Value);
-
-            if (PlanCalculator.IsUncraftable(def))
-            {
-                Rect warnRect = new(row.x + 300f, row.y, row.width - 300f - StatusWidth, row.height);
-                DrawStatus(warnRect, "GoalPlanner_Uncraftable".Translate(), WarnColor, TextAnchor.MiddleLeft);
-                TooltipHandler.TipRegion(row, "GoalPlanner_UncraftableDesc".Translate());
-            }
+            DrawMaterialNode(node, 0, width, ref y, ref index);
         }
 
         foreach (StuffRequirement stuff in plan.stuff)
@@ -124,13 +114,79 @@ public class GoalDetailPanel
             DrawIconLabel(row, null, "GoalPlanner_AnyStuff".Translate(categories));
             DrawStatus(row, "×" + stuff.count, Color.white, TextAnchor.MiddleRight);
         }
+    }
 
-        foreach (KeyValuePair<string, float> other in plan.otherIngredients)
+    /// <summary>A material line, followed (indented) by how its shortfall gets crafted.</summary>
+    private static void DrawMaterialNode(MaterialNode node, int depth, float width, ref float y, ref int index)
+    {
+        Rect row = NextRow(width, ref y, index++);
+        Rect indented = Indent(row, depth);
+
+        DrawIconLabel(indented, node.def, node.label);
+        if (node.def == null)
+        {
+            // "Any meat" style ingredient: no single item to count.
+            DrawStatus(row, "×" + node.need, Color.white, TextAnchor.MiddleRight);
+            return;
+        }
+
+        DrawHaveNeed(row, node.stockBefore, node.need);
+        if (depth > 0)
+        {
+            TooltipHandler.TipRegion(row, "GoalPlanner_StockLeftDesc".Translate());
+        }
+
+        if (node.Shortfall > 0 && node.craft == null && PlanCalculator.IsUncraftable(node.def))
+        {
+            Rect warnRect = new(indented.x + 260f, row.y, row.xMax - StatusWidth - indented.x - 260f, row.height);
+            DrawStatus(warnRect, "GoalPlanner_Uncraftable".Translate(), WarnColor, TextAnchor.MiddleLeft);
+            TooltipHandler.TipRegion(row, "GoalPlanner_UncraftableDesc".Translate());
+        }
+
+        if (node.craft == null)
+        {
+            return;
+        }
+
+        // "Craft the missing 10 (10x at fabrication bench)"
+        CraftStep craft = node.craft;
+        Rect craftRow = NextRow(width, ref y, index++);
+        Rect craftIndented = Indent(craftRow, depth + 1);
+        string where = craft.workbench != null ? craft.workbench.LabelCap.ToString() : "-";
+        GUI.color = WarnColor;
+        Text.Anchor = TextAnchor.MiddleLeft;
+        Widgets.Label(craftIndented, "GoalPlanner_CraftShortfall".Translate(craft.amount, craft.times, where));
+        Text.Anchor = TextAnchor.UpperLeft;
+        GUI.color = Color.white;
+
+        foreach (MaterialNode ingredient in craft.ingredients)
+        {
+            DrawMaterialNode(ingredient, depth + 1, width, ref y, ref index);
+        }
+    }
+
+    /// <summary>Total to keep in stock once crafting is counted (e.g. steel for the goal + steel for components).</summary>
+    private static void DrawOnHandTotals(GoalPlan plan, float width, ref float y)
+    {
+        if (!plan.HasCrafting)
+        {
+            return;
+        }
+
+        Widgets.ListSeparator(ref y, width, "GoalPlanner_OnHandTotals".Translate());
+        int index = 0;
+        foreach (KeyValuePair<ThingDef, int> entry in plan.onHandTotals.Where(e => e.Value > 0))
         {
             Rect row = NextRow(width, ref y, index++);
-            DrawIconLabel(row, null, other.Key.CapitalizeFirst());
-            DrawStatus(row, "×" + other.Value.ToStringDecimalIfSmall(), Color.white, TextAnchor.MiddleRight);
+            DrawIconLabel(row, entry.Key, entry.Key.LabelCap);
+            DrawHaveNeed(row, PlanCalculator.CountInColony(entry.Key), entry.Value);
         }
+    }
+
+    private static Rect Indent(Rect row, int depth)
+    {
+        float offset = depth * 24f;
+        return new Rect(row.x + offset, row.y, row.width - offset, row.height);
     }
 
     private static void DrawFuel(GoalPlan plan, float width, ref float y)
@@ -228,26 +284,6 @@ public class GoalDetailPanel
         y += 22f;
     }
 
-    private static void DrawCrafts(GoalPlan plan, float width, ref float y)
-    {
-        if (plan.crafts.Count == 0)
-        {
-            return;
-        }
-
-        Widgets.ListSeparator(ref y, width, "GoalPlanner_Crafts".Translate());
-        int index = 0;
-        foreach (CraftRequirement craft in plan.crafts)
-        {
-            Rect row = NextRow(width, ref y, index++);
-            DrawIconLabel(row, craft.def, $"{craft.def.LabelCap} ×{craft.count}");
-            if (craft.workbench != null)
-            {
-                DrawStatus(row, craft.workbench.LabelCap, Color.gray, TextAnchor.MiddleRight);
-            }
-        }
-    }
-
     // ---------------------------------------------------------------- helpers
 
     private static Rect NextRow(float width, ref float y, int index)
@@ -280,7 +316,7 @@ public class GoalDetailPanel
         x += IconSize + 8f;
 
         Text.Anchor = TextAnchor.MiddleLeft;
-        Widgets.Label(new Rect(x, row.y, row.width - x - StatusWidth, row.height), label);
+        Widgets.Label(new Rect(x, row.y, row.xMax - x - StatusWidth, row.height), label);
         Text.Anchor = TextAnchor.UpperLeft;
     }
 
