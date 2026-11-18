@@ -30,6 +30,6 @@
   <GoalPlanner_Cost>재료: {0}</GoalPlanner_Cost>
   <GoalPlanner_CraftShortfall>{0}개 부족, {1}에서 제작 가능</GoalPlanner_CraftShortfall>
   <GoalPlanner_Shortfall>{0}개 부족</GoalPlanner_Shortfall>
-  <GoalPlanner_StockLeftDesc>보유량: 위 항목에 쓰고 남은 재고입니다.</GoalPlanner_StockLeftDesc>
+  <GoalPlanner_StockLeftDesc>위 항목에 필요한 수량입니다.</GoalPlanner_StockLeftDesc>
   <GoalPlanner_OnHandTotals>준비해야 할 총량 (제작 재료 포함)</GoalPlanner_OnHandTotals>
 </LanguageData>

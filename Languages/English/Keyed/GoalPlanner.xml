@@ -30,6 +30,6 @@
   <GoalPlanner_Cost>Cost: {0}</GoalPlanner_Cost>
   <GoalPlanner_CraftShortfall>{0} short, can be crafted at {1}</GoalPlanner_CraftShortfall>
   <GoalPlanner_Shortfall>{0} short</GoalPlanner_Shortfall>
-  <GoalPlanner_StockLeftDesc>Have: stock left over after the lines above.</GoalPlanner_StockLeftDesc>
+  <GoalPlanner_StockLeftDesc>Amount needed for the item above.</GoalPlanner_StockLeftDesc>
   <GoalPlanner_OnHandTotals>Total to have on hand (including crafting)</GoalPlanner_OnHandTotals>
 </LanguageData>
