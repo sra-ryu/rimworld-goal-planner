@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  <MainButtonDef>
+    <defName>GoalPlanner</defName>
+    <label>goals</label>
+    <description>Plan goals and see the research, buildings and resources they require.</description>
+    <tabWindowClass>GoalPlanner.MainTabWindow_GoalPlanner</tabWindowClass>
+    <order>95</order>
+  </MainButtonDef>
+</Defs>
