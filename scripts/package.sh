@@ -36,7 +36,7 @@ package() {
   mkdir -p "$DIST/Assemblies"
   rsync -a --exclude 'Screenshots/' --exclude '.DS_Store' "$REPO/About" "$DIST/"
   cp "$REPO/Assemblies/GoalPlanner.dll" "$DIST/Assemblies/"
-  rsync -a --exclude '.DS_Store' "$REPO/Defs" "$REPO/Languages" "$DIST/"
+  rsync -a --exclude '.DS_Store' "$REPO/Defs" "$REPO/Languages" "$REPO/Textures" "$DIST/"
   cp "$REPO/LICENSE" "$REPO/README.md" "$DIST/"
 
   echo "== Done"

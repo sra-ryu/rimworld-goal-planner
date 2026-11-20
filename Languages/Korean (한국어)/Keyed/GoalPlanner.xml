@@ -34,4 +34,6 @@
   <GoalPlanner_Shortfall>{0}개 부족</GoalPlanner_Shortfall>
   <GoalPlanner_StockLeftDesc>위 항목에 필요한 수량입니다.</GoalPlanner_StockLeftDesc>
   <GoalPlanner_OnHandTotals>준비해야 할 총량 (선행 건물·제작 재료 포함)</GoalPlanner_OnHandTotals>
+  <GoalPlanner_CompleteDesc>목표 완료</GoalPlanner_CompleteDesc>
+  <GoalPlanner_OtherCategory>기타</GoalPlanner_OtherCategory>
 </LanguageData>

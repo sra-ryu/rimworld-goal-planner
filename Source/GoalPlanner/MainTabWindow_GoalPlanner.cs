@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using RimWorld;
 using UnityEngine;
@@ -13,6 +14,16 @@ public class MainTabWindow_GoalPlanner : MainTabWindow
     private const float RowHeight = 40f;
     private const float IconSize = 32f;
     private const float SmallButtonSize = 24f;
+
+    private static readonly Texture2D TrashTex = ContentFinder<Texture2D>.Get("GoalPlanner/Trash");
+    private static readonly Texture2D CheckOffTex = ContentFinder<Texture2D>.Get("GoalPlanner/CheckboxOff");
+    private static readonly Texture2D CheckOnTex = ContentFinder<Texture2D>.Get("GoalPlanner/CheckboxOn");
+
+    /// <summary>How long (ms) the green check stays visible before a completed goal disappears.</summary>
+    private const long CompleteDelayMs = 450;
+
+    /// <summary>Goals whose checkbox was just ticked, with the tick count when that happened.</summary>
+    private readonly Dictionary<Goal, long> completing = new();
 
     private readonly GoalDetailPanel detailPanel = new();
     private Vector2 scrollPosition;
@@ -85,7 +96,7 @@ public class MainTabWindow_GoalPlanner : MainTabWindow
         }
     }
 
-    /// <returns>True when the remove button was clicked.</returns>
+    /// <returns>True when the goal should be removed (trash button clicked or completion checkbox ticked).</returns>
     private bool DrawGoalRow(Rect row, Goal goal, int index)
     {
         if (goal == selected)
@@ -100,9 +111,9 @@ public class MainTabWindow_GoalPlanner : MainTabWindow
 
         float midY = row.y + row.height / 2f;
 
-        // Right side, right to left: remove, +, count, -
+        // Right side, right to left: remove (trash can), +, count, -
         Rect removeRect = new(row.xMax - SmallButtonSize - 4f, midY - SmallButtonSize / 2f, SmallButtonSize, SmallButtonSize);
-        bool remove = Widgets.ButtonImage(removeRect, TexButton.Delete, true, "GoalPlanner_Remove".Translate());
+        bool remove = Widgets.ButtonImage(removeRect, TrashTex, true, "GoalPlanner_Remove".Translate());
 
         Rect plusRect = new(removeRect.x - SmallButtonSize - 12f, removeRect.y, SmallButtonSize, SmallButtonSize);
         Rect countRect = new(plusRect.x - 40f, row.y, 40f, row.height);
@@ -120,13 +131,32 @@ public class MainTabWindow_GoalPlanner : MainTabWindow
         Text.Anchor = TextAnchor.MiddleCenter;
         Widgets.Label(countRect, goal.count.ToString());
 
-        // Left side: icon and name; clicking selects the goal.
-        Rect iconRect = new(row.x + 4f, midY - IconSize / 2f, IconSize, IconSize);
+        // Left side: "goal complete" checkbox, icon and name. Ticking the checkbox removes the goal.
+        // The checkbox is drawn before the row's select button so it gets the click.
+        Rect checkRect = new(row.x + 4f, midY - SmallButtonSize / 2f, SmallButtonSize, SmallButtonSize);
+        bool wasChecked = completing.TryGetValue(goal, out long checkedAt);
+        bool done = wasChecked;
+        Widgets.Checkbox(checkRect.x, checkRect.y, ref done, SmallButtonSize, false, false, CheckOnTex, CheckOffTex);
+        if (done && !wasChecked)
+        {
+            // Show the green check for a moment, then remove the goal.
+            completing[goal] = Environment.TickCount64;
+        }
+        TooltipHandler.TipRegion(checkRect, "GoalPlanner_CompleteDesc".Translate().ToString());
+
+        // Icon + name are centered as one block between the checkbox and the "-" button.
+        const float iconGap = 8f;
+        float areaX = checkRect.xMax + 8f;
+        float areaWidth = minusRect.x - 8f - areaX;
+        string shownLabel = goal.target.LabelCap.Truncate(areaWidth - IconSize - iconGap).ToString();
+        float labelWidth = Text.CalcSize(shownLabel).x;
+        float startX = areaX + (areaWidth - (IconSize + iconGap + labelWidth)) / 2f;
+
+        Rect iconRect = new(startX, midY - IconSize / 2f, IconSize, IconSize);
         Widgets.DefIcon(iconRect, goal.target);
 
         Text.Anchor = TextAnchor.MiddleLeft;
-        Rect labelRect = new(iconRect.xMax + 8f, row.y, minusRect.x - iconRect.xMax - 12f, row.height);
-        Widgets.Label(labelRect, goal.target.LabelCap.Truncate(labelRect.width));
+        Widgets.Label(new Rect(iconRect.xMax + iconGap, row.y, labelWidth + 4f, row.height), shownLabel);
         Text.Anchor = TextAnchor.UpperLeft;
 
         if (Widgets.ButtonInvisible(new Rect(row.x, row.y, minusRect.x - row.x, row.height)))
@@ -134,6 +164,12 @@ public class MainTabWindow_GoalPlanner : MainTabWindow
             selected = goal;
         }
 
-        return remove;
+        bool finished = wasChecked && Environment.TickCount64 - checkedAt >= CompleteDelayMs;
+        if (remove || finished)
+        {
+            completing.Remove(goal);
+            return true;
+        }
+        return false;
     }
 }

@@ -34,4 +34,6 @@
   <GoalPlanner_Shortfall>{0} short</GoalPlanner_Shortfall>
   <GoalPlanner_StockLeftDesc>Amount needed for the item above.</GoalPlanner_StockLeftDesc>
   <GoalPlanner_OnHandTotals>Total to have on hand (including buildings and crafting)</GoalPlanner_OnHandTotals>
+  <GoalPlanner_CompleteDesc>Goal complete</GoalPlanner_CompleteDesc>
+  <GoalPlanner_OtherCategory>Other</GoalPlanner_OtherCategory>
 </LanguageData>
