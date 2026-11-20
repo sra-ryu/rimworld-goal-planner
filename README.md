@@ -5,10 +5,12 @@ A RimWorld mod that lets you set goals and shows everything you need to reach th
 ## Features
 
 - **Multiple goals**: Add as many goals as you like (e.g. "Build a shuttle") and open each one to see its full breakdown.
+- **Easy goal management**: Pick goals from a list grouped by Architect category, change how many you want, and tick the checkbox next to a goal when it's done to remove it.
 - **Prerequisite research**: The full research chain the goal depends on, including the research benches and facilities those projects require (e.g. hi-tech research bench, multi-analyzer).
 - **Prerequisite buildings**: Buildings and furniture you have to build first, with their own material costs.
 - **Resources**: Materials for the goal itself and for its prerequisite buildings are listed separately, with a combined total to have on hand (e.g. steel, components, plasteel).
 - **Fuel calculation**: How much fuel a refuelable building needs to fill up completely (e.g. chemfuel for a shuttle).
+- **Crafting breakdown** (optional): For materials you don't have enough of and that can be crafted (e.g. components), shows what to make them from, plus the workbenches and research needed.
 
 ## Requirements
 
@@ -36,6 +38,7 @@ How it works:
 About/About.xml          Mod metadata
 Defs/                    XML definitions (main tab button)
 Languages/               English and Korean translations
+Textures/                Mod icons (checkbox, trash can)
 Source/GoalPlanner/      C# project
 Assemblies/              Build output (GoalPlanner.dll, not committed)
 ```
@@ -73,10 +76,12 @@ This project is licensed under the [MIT License](LICENSE).
 ## 주요 기능
 
 - **여러 개의 목표**: 목표(예: "우주 왕복선 만들기")를 원하는 만큼 추가하고, 각 목표를 눌러 필요한 내용을 자세히 볼 수 있습니다.
+- **간편한 목표 관리**: Architect 카테고리별로 묶인 목록에서 목표를 고르고, 개수를 바꾸고, 달성하면 목표 옆 체크박스를 체크해 지울 수 있습니다.
 - **선행 연구**: 목표에 필요한 연구를 처음부터 끝까지 보여주고, 그 연구에 필요한 연구대와 시설(예: 첨단 연구대, 복합 분석기)도 함께 알려줍니다.
 - **선행 건물**: 먼저 지어야 하는 건물과 가구, 그리고 각각의 건설 재료를 보여줍니다.
 - **필요 자원**: 목표 자체의 재료와 선행 건물의 재료를 나눠서 보여주고, 준비해야 할 총량도 함께 알려줍니다(예: 강철, 부품, 플라스틸).
 - **연료 계산**: 연료를 쓰는 건물을 가득 채우는 데 필요한 연료량을 계산합니다(예: 우주 왕복선의 화학 연료).
+- **제작 재료 펼치기**(선택): 재료가 부족하고 제작할 수 있는 자원(예: 부품)은 무엇으로 만드는지, 필요한 작업대와 연구까지 함께 보여줍니다.
 
 ## 요구 사항
 
@@ -104,6 +109,7 @@ This project is licensed under the [MIT License](LICENSE).
 About/About.xml          모드 정보
 Defs/                    XML 정의 (메인 탭 버튼)
 Languages/               영어, 한국어 번역
+Textures/                모드 아이콘 (체크박스, 쓰레기통)
 Source/GoalPlanner/      C# 프로젝트
 Assemblies/              빌드 결과물 (GoalPlanner.dll, 커밋하지 않음)
 ```
