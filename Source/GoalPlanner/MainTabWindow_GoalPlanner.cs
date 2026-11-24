@@ -7,6 +7,7 @@ using Verse;
 namespace GoalPlanner;
 
 /// <summary>The "Goals" tab on the bottom bar: goal list on the left, plan for the selected goal on the right.</summary>
+[StaticConstructorOnStartup]
 public class MainTabWindow_GoalPlanner : MainTabWindow
 {
     private const float HeaderHeight = 45f;
